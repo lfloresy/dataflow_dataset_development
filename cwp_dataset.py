@@ -1,34 +1,32 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Aug 25 13:34:05 2025
-
 @author: Lorenzo CTR Flores-Y
 """
 #%%
-# 0.INSTALL LIBRARIES & UPLOAD CWP DATA
+# 0.INSTALL LIBRARIES & UPLOAD DATA
 # Installing  cx_Oracle (intalled on anaconda_prompt)
 import cx_Oracle
 
 #%%
 import os 
 # Tell Python where the Oracle Instant Client is
-os.add_dll_directory(r"C:\oracle_spyder\instantclient_23_9")
+os.add_dll_directory(r"xxxxx")
 
 #%%
 # Defina the path for the path for the oracle drivers
 import os
-os.environ['PATH'] = r"C:\oracle_spyder\instantclient_23_9;" + os.environ['PATH']
+os.environ['PATH'] = r"xxxxx" + os.environ['PATH']
 
 #%%
 # Add Oracle Instant Client folder first
-os.add_dll_directory(r"C:\oracle_spyder\instantclient_23_9")
+os.add_dll_directory(r"xxxx")
 
-# os.environ['PATH'] = r"C:\oracle_spyder\instantclient_23_9;" + os.environ['PATH']  # optional
+# os.environ['PATH'] = r"xxxxxx;" + os.environ['PATH']  # optional
 
 print("cx_Oracle version:", cx_Oracle.version)
 
 # Connection Credentials 
-dsn = cx_Oracle.makedsn("pdbsamc505.faa.gov", 1521, service_name="ndc") 
+dsn = cx_Oracle.makedsn("xxxx", xxxx, service_name="ndc") 
 conn = cx_Oracle.connect(user="xxxxx", password="xxxxxx", dsn=dsn) #enter your user name and password to connect to the Oracle database
 
 print("Connected successfully!")
@@ -39,10 +37,8 @@ cur = conn.cursor()
 
 # Fetch just 10 rows to test the connection
 query = """
-SELECT JCN, JCN_DESC, JCN_STATUS, CIP, LOCID_CD, PROJ_CD, ORG_SVC_AREA,
-       JCN_STAT_DT, COMPLTN_DT, STATE, PA_EXECUTION_DT, MOST_DETAILED_COST_EST,
-       PA_PLANNING_FY, TIER, FACTYP_CD
-FROM CWP_PROJ_COLL_EXT_VW
+SELECT xx, xxx, xxxx, xxx, xxx, xxx, xxx,
+FROM XXXX
 WHERE ROWNUM <= 10
 """
 cur.execute(query)
@@ -60,10 +56,8 @@ for row in rows:
 import pandas as pd
 
 query = """
-SELECT JCN, JCN_DESC, JCN_STATUS, CIP, LOCID_CD, PROJ_CD, ORG_SVC_AREA,
-       JCN_STAT_DT, COMPLTN_DT, STATE, PA_EXECUTION_DT, MOST_DETAILED_COST_EST,
-       PA_PLANNING_FY, TIER, FACTYP_CD
-FROM CWP_PROJ_COLL_EXT_VW
+SELECT xx, xxx, xxxx, xxx, xxx, xxx,
+FROM xxxx
 """
 
 df = pd.read_sql(query, con=conn)
@@ -79,29 +73,23 @@ df.info()
 #%%
 # Filter FIP_CIPs
 # Create the list of cips 
-cip_list = [
-    "F01.01-00", "F01.02-00", "F06.01-00", "F11.01-02", "F12.00-00",
-    "F13.01-00", "F13.02-00", "F13.03-00", "F13.04-02", "F20.01-01",
-    "F24.01-02", "F24.02-01", "F26.01-01", "F31.01-01", "F34.01-01",
-    "S04.02-03", "F35.02-01", "F35.04-01", "F35.05-01", "F35.06-01",
-    "F35.07-01", "F35.08-01", "F35.09-01", "F35.11-01", "F35.12-01",
-    "F35.13-01", "F35.14-01", "F35.15-01", "F35.16-01", "F35.17-01",
-    "F35.18-01"
-]
+list = [
+    "F01", "F01", "F06", "F11", "F12",
+   ]
 
 # Keep only the FIP_CIPs
-df_cwp = df[df["cip"].isin(cip_list)]
+df_cwp = df[df["cip"].isin(list)]
 
 # Show the results
 df_cwp.info()
 
 print(df_cwp.shape)
 #%%
-# Remove jcn_status N, U, W, X
-df_cwp = df_cwp[~df_cwp["jcn_status"].isin(["N", "U", "W", "X"])]
+# Remove status N, U, W, X
+df_cwp = df_cwp[~df_cwp["status"].isin(["N", "U", "W", "X"])]
 
 # Show all unique values to confirm
-print(df_cwp["jcn_status"].unique())
+print(df_cwp["status"].unique())
 
 #%%
 # Count null values in compltn_dt
@@ -136,11 +124,11 @@ print(df_cwp_filtered["date_flag"].value_counts())
 
 #%%
 # Define the completed statuses
-completed_statuses = ["C", "D", "F", "MC", "MD"]
+completed_statuses = ["X", "X", "X, "X", "X"]
 
 # Create a new column empty_flag
 df_cwp_filtered["empty_flag"] = df_cwp_filtered.apply(
-    lambda row: "YES" if row["date_flag"] == "EMPTY" and row["jcn_status"] in completed_statuses else "NO",
+    lambda row: "YES" if row["date_flag"] == "EMPTY" and row["status"] in completed_statuses else "NO",
     axis=1
 )
 
@@ -156,21 +144,17 @@ df_cwp_final = df_cwp_final.drop(columns=["date_flag", "empty_flag"])
 # Check the final DataFrame
 print("Final number of rows:", len(df_cwp_final))
 
-print(df_cwp_final['jcn_status'].value_counts())
+print(df_cwp_final['xxx_status'].value_counts())
 #%%
-# --- 2.LOAD FIP_FY17-FY27 FILE ---
+# --- 2.LOAD FY17-FY27 FILE ---
 import os
 
 # Check current working directory
 print("Current working directory:", os.getcwd())
-#%%
-# Change working directory (if needed)
-os.chdir(r"C:\Users\Lorenzo CTR Flores-Y\Documents\python_flow")
-print("New working directory:", os.getcwd())
 
 #%%
 # Read the CSV file (replace 'your_file.csv' with your actual file name)
-df_fip_fy = pd.read_csv('FIP_FY17-FY27_AUG2025.csv')
+df_fip_fy = pd.read_csv('FY17-FY27_AUG2025.csv')
 
 # Display the first few rows to confirm it loaded correctly
 df_fip_fy.info()
@@ -193,11 +177,8 @@ df_fy_v2.info()
 #%% Clean the file
 # List of columns to remove
 cols_to_drop = [
-    "fip_baseline", "jcn_desc", "jcn_status", "cip", "locid_cd",
-    "org_svc_area", "proj_cd", "jcn_stat_dt", "compltn_dt", "state",
-    "pa_execution_dt", "most_detailed_cost_est", "pa_planning_fy",
-    "tier", "multi-year"
-]
+    "xxx", "xxxx", "xxxx", "xxx", "xx",
+   ]
 
 # Drop the columns
 df_fip_fy = df_fip_fy.drop(columns=cols_to_drop, errors="ignore")
@@ -206,13 +187,13 @@ df_fip_fy = df_fip_fy.drop(columns=cols_to_drop, errors="ignore")
 df_fip_fy.info()
 
 #%%
-# --- 3.JOIN FIP_CWP & FIP_FY17-FY27 FOR FIP_ADDITIONS ---
+# --- 3.JOIN CWP & FFY17-FY27 FOR ADDITIONS ---
 
 # Perform a left join first
 merged = pd.merge(
     df_cwp_final,
     df_fip_fy,
-    on="jcn",
+    on="xxx",
     how="left",
     indicator=True
 )
@@ -228,12 +209,12 @@ print("Rows in df_cwp_final:", len(df_cwp_final))
 print("Rows in df_fip_fy:", len(df_fip_fy))
 print("Rows in df_cwp_add (unmatched):", len(df_cwp_add))
 
-print(df_cwp_add['jcn_status'].value_counts())
+print(df_cwp_add['xxx_status'].value_counts())
 
 df_cwp_add.info()
 
 #%%
-# --- 4. JOIN FIP_ADDITIONS WITH SHORTFALLS ---
+# --- 4. JOIN ADDITIONS WITH SHORTFALLS ---
 
 # Read the CSV file (replace 'your_file.csv' with your actual file name)
 df_shortfalls = pd.read_csv('fip_shortfalls.csv')
@@ -251,8 +232,8 @@ df_shortfalls.columns = df_shortfalls.columns.str.strip() \
 # Show the results 
 df_shortfalls.info()
 #%%
-# Remove all the parametes and only keep JCN
-df_shortfalls = df_shortfalls[['jcn']]
+# Remove all the parametes and only keep xxx
+df_shortfalls = df_shortfalls[['xxx']]
 
 # Add new column with constant value
 df_shortfalls['fip_add_shortfall'] = "YES"
@@ -264,7 +245,7 @@ print("Rows in df_shortfalls:", len(df_shortfalls))
 df_cwp_add_shortfalls = pd.merge(
     df_cwp_add,
     df_shortfalls,
-    on="jcn",
+    on="xxx",
     how="left"
 )
 
@@ -273,7 +254,7 @@ print("Rows in df_cwp_add:", len(df_cwp_add))
 print("Rows in df_shortfalls:", len(df_shortfalls))
 print("Rows in df_cwp_add_shortfalls (left join result):", len(df_cwp_add_shortfalls))
 
-print(df_cwp_add_shortfalls['jcn_status'].value_counts())
+print(df_cwp_add_shortfalls['xxx_status'].value_counts())
 
 df_cwp_add_shortfalls.info()
 #%%
@@ -287,26 +268,20 @@ df_cwp_add_shortfalls["multi_year"] = "NO"
 df_cwp_add_shortfalls.info()
 #%%
 # Keep only the neded parameters
-df_cwp_subset = df[["jcn", "jcn_status", "most_detailed_cost_est", "jcn_stat_dt" ]]
+df_cwp_subset = df[["xxx", "xxx_status", "most_detailed_cost_est", "xxx_stat_dt" ]]
 
 df_cwp_subset.info()
 
 print(len(df_cwp_subset))
-print(df_cwp_subset['jcn_status'].value_counts())
+print(df_cwp_subset['xxx_status'].value_counts())
 
 df_cwp_subset.info()
-#%%
-#%% NEW UPDATE
-# Keep only the columns we need from df_fy_v2
-df_fy_v2_subset = df_fy_v2[['jcn', 'pa_execution_dt', 'pa_planning_fy', 'fip_baseline', 'fip_fy', 'fip_cip', 'baseline_mdce']]
-
-df_fy_v2_subset.info()
 
 #%% df_fip_cwp_subset_updated
 # Left join with df_fip_fy as the left table
 df_fip_cwp_subset_updated = df_fy_v2_subset.merge(
     df_cwp_subset,
-    on="jcn",
+    on="xxx",
     how="left",
     suffixes=("", "_cwp")
 )
@@ -320,7 +295,7 @@ print("Row count df_fip_cwp_subset_updated:", len(df_fip_cwp_subset_updated))
 # Left join with df_fip_fy as the left table
 df_fip_cwp_subset_updated = df_fy_v2_subset.merge(
     df_cwp_subset,
-    on="jcn",
+    on="xxx",
     how="left",
     suffixes=("", "_cwp")
 )
@@ -336,7 +311,7 @@ print("Row count df_fip_cwp_subset_updated:", len(df_fip_cwp_subset_updated))
 # Left join with df_fip_fy as the left table
 df_fip_cwp_subset = df_fip_fy.merge(
     df_cwp_subset,
-    on="jcn",
+    on="xxx",
     how="left",
     suffixes=("", "_cwp")
 )
@@ -346,7 +321,7 @@ print("Row count df_fip_fy:", len(df_fip_fy))
 print("Row count df_cwp_subset:", len(df_cwp_subset))
 print("Row count df_fip_cwp_subset:", len(df_fip_cwp_subset))
 
-print(df_fip_cwp_subset['jcn_status'].value_counts())
+print(df_fip_cwp_subset['xxx_status'].value_counts())
 
 #%%
 # --- 5.UNION FIP_FY & CWP_ADD ---
@@ -359,19 +334,19 @@ print(len(df_cwp_add_shortfalls))
 print(len(df_fip_fy))              # should be 9510
 print(len(df_union_fip_add))               
 
-print(df_union_fip_add['jcn_status'].value_counts(dropna=False))
+print(df_union_fip_add['xxx_status'].value_counts(dropna=False))
 #%%
 # Validate the union 
 df_union_fip_add.info()
 
 #%%
-# Count unique jcn values
-unique_jcn_count = df_union_fip_add["jcn"].nunique()
-print("Unique jcn count:", unique_jcn_count)
+# Count unique xxx values
+unique_xxx_count = df_union_fip_add["xxx"].nunique()
+print("Unique xxx count:", unique_xxx_count)
 
-# Count total jcn rows
-total_jcn_rows = df_union_fip_add["jcn"].count()
-print("Total jcn rows:", total_jcn_rows)
+# Count total xxx rows
+total_xxx_rows = df_union_fip_add["xxx"].count()
+print("Total xxx rows:", total_xxx_rows)
 
 # Distribution of multi_year
 print("\nmulti_year counts:")
@@ -391,7 +366,7 @@ print(df_union_fip_add["fip_add_shortfall"].value_counts(dropna=False))
 # Read the CSV file (replace 'your_file.csv' with your actual file name)
 df_my = pd.read_csv('my_fy17_fy28_v1.csv')
 
-df_my = df_my[["JCN", "MULTI_YEAR", "FIP_FY"]]
+df_my = df_my[["xxx", "MULTI_YEAR", "FIP_FY"]]
 df_my.info()
 
 #%%
@@ -409,15 +384,15 @@ df_my= df_my[df_my['multi_year'] != "NO"]
 
 print(df_my['multi_year'].value_counts())
 #%% 
-# Sort by jcn and fip_fy descending
-df_my = df_my.sort_values(['jcn', 'fip_fy'], ascending=[True, False])
+# Sort by xxx and fip_fy descending
+df_my = df_my.sort_values(['xxx', 'xxx'], ascending=[True, False])
 
-# Keep only the latest fip_fy per jcn
-df_my = df_my.groupby('jcn', group_keys=False).head(1)
+# Keep only the latest fip_fy per xxx
+df_my = df_my.groupby('xxx', group_keys=False).head(1)
 
 # Validate
 print("Number of rows:", len(df_my))
-print(df_my['jcn'].value_counts())  # all values should be 1
+print(df_my['xxx'].value_counts())  # all values should be 1
 
 df_my.info()
 #%%
@@ -428,31 +403,31 @@ df_my.info()
 
 #%%
 # Get the Change Reasons dataset and format it 
-df_change_reasons = pd.read_csv('fip_change_tracking_sep.csv')
+df_change_reasons = pd.read_csv('change_tracking_sep.csv')
 
 # Convert all column names to snake_case
 df_change_reasons.columns = df_change_reasons.columns.str.lower()
 
 # Select only the parameters needed for the analysis 
-df_change_reasons = df_change_reasons[["jcn", "items", "fip_year", "fip_changenotes", "fip_baselinechangereasons"]]
+df_change_reasons = df_change_reasons[["xxx", "xxx", "xxx", "xxx", "xxx"]]
 
 df_change_reasons.info()
 
 #%%
 # Exclude all the null values
-df_change_reasons = df_change_reasons[df_change_reasons['jcn'].notna()]
+df_change_reasons = df_change_reasons[df_change_reasons['xxx'].notna()]
 
 print("Number of rows:", len(df_change_reasons))
 
 
-# Rename items to fip_jcn_description 
-df_change_reasons = df_change_reasons.rename(columns={'items': 'fip_jcn_description'})
+# Rename items to fip_xxx_description 
+df_change_reasons = df_change_reasons.rename(columns={'items': 'fip_xxx_description'})
 
 df_change_reasons.info()
 
 #%%
 # Delete duplicates 
-df_change_reasons = df_change_reasons.drop_duplicates(subset='jcn', keep='first')
+df_change_reasons = df_change_reasons.drop_duplicates(subset='xxx', keep='first')
 
 print("Number of rows:", len(df_change_reasons))
 
@@ -460,18 +435,10 @@ print("Number of rows:", len(df_change_reasons))
 df_my_change_reasons = pd.merge(
     df_my,
     df_change_reasons,
-    on='jcn',
+    on='xxx',
     how='outer'
 )
 
-# Optional: check the result
-print("Number of rows after full outer join:", len(df_my_change_reasons))
-
-df_my_change_reasons.info()
-
-print(df_my_change_reasons['multi_year'].value_counts())
-
-df_my_change_reasons.info()
 #%%
 # 7. --- JOIN OPPM CHANGE REASONS - MULTI-YEAR WITH FIP --- 
 
@@ -488,7 +455,7 @@ print(len(df_my_change_reasons))
 #%%
 df_fip_cwp_oppm = df_union_fip_add.merge(
     df_my_change_reasons,
-    on='jcn',
+    on='xxx',
     how='left'
 )
 
@@ -512,15 +479,15 @@ print(df_fip_cwp_oppm['fip_baseline'].value_counts())
 
 #%%
 # Validate the table 
-print(df_fip_cwp_oppm['jcn_status'].value_counts(dropna=False))
+print(df_fip_cwp_oppm['xxx_status'].value_counts(dropna=False))
 
 print(df_fip_cwp_oppm['fip_baseline'].value_counts(dropna=False))
 
 
 print(
     df_fip_cwp_oppm.pivot_table(
-        index='jcn_status',
-        columns='fip_baseline',
+        index='xxx',
+        columns='xxx',
         aggfunc='size',
         fill_value=0
     )
@@ -551,12 +518,12 @@ status_mapping = {
 }
 
 # Apply mapping to create a new column
-df_fip_cwp_oppm["sbit_status"] = df_fip_cwp_oppm["jcn_status"].map(status_mapping)
+df_fip_cwp_oppm["sbit_status"] = df_fip_cwp_oppm["xxx_status"].map(status_mapping)
 
 
 # Make the NaN values Canceled 
 df_fip_cwp_oppm["sbit_status"] = (
-    df_fip_cwp_oppm["jcn_status"]
+    df_fip_cwp_oppm["xxx_status"]
     .map(status_mapping)
     .fillna("CANCELLED")
 )
@@ -575,19 +542,13 @@ df_fip_cwp_oppm.info()
 #10. --- RANK---
 df_fip_cwp_oppm['row_number'] = (
     df_fip_cwp_oppm
-    .sort_values(['jcn', 'fip_year'], ascending=[True, False])  # sort by jcn, then fip_year descending
-    .groupby('jcn')
+    .sort_values(['xxx', 'fip_year'], ascending=[True, False])  # sort by xxx, then fip_year descending
+    .groupby('xxx')
     .cumcount() + 1  # row_number starting at 1
 )
 
 print(df_fip_cwp_oppm['row_number'].value_counts(dropna=False))
 #%% 
-iija_values = [
-    'F35.02-01', 'F35.04-01', 'F35.05-01', 'F35.06-01',
-    'F35.07-01', 'F35.08-01', 'F35.09-01', 'F35.11-01',
-    'F35.12-01', 'F35.13-01', 'F35.14-01', 'F35.15-01',
-    'F35.16-01', 'F35.17-01', 'F35.18-01'
-]
 
 df_fip_cwp_oppm['cip_category'] = df_fip_cwp_oppm['cip'].apply(
     lambda x: 'IIJA' if x in iija_values else 'LEGACY'
@@ -597,13 +558,6 @@ print(df_fip_cwp_oppm['cip_category'].value_counts(dropna=False))
 #%%
 #11. --- SBIT NOTES --- 
 # FIP Column 
-# List of cip values considered as 'in'
-cip_list = [
-    'f01.01-00', 'f01.02-00', 'f06.01-00', 'f11.01-02', 'f12.00-00',
-    'f13.01-00', 'f13.02-00', 'f13.03-00', 'f13.04-02', 'f20.01-01',
-    'f24.01-02', 'f24.02-01', 'f26.01-01', 'f31.01-01', 'f34.01-01',
-    's04.02-03'
-]
 
 # Create new column 'fip' based on parameter 'cip'
 df_fip_cwp_oppm['fip'] = df_fip_cwp_oppm['cip'].apply(
@@ -612,12 +566,6 @@ df_fip_cwp_oppm['fip'] = df_fip_cwp_oppm['cip'].apply(
 print(df_fip_cwp_oppm['fip'].value_counts(dropna=False))
 
 # Create new colunn 'bils' based on parameter 'cip'
-# list of cip values considered as 'in' for bils
-bils_list = [
-    'f35.02-01', 'f35.04-01', 'f35.05-01', 'f35.06-01', 'f35.07-01',
-    'f35.08-01', 'f35.09-01', 'f35.11-01', 'f35.12-01', 'f35.13-01',
-    'f35.14-01', 'f35.15-01', 'f35.16-01', 'f35.17-01', 'f35.18-01'
-]
 
 # Create new column 'bils' based on parameter 'cip'
 df_fip_cwp_oppm['bils'] = df_fip_cwp_oppm['cip'].apply(
@@ -629,12 +577,12 @@ print(df_fip_cwp_oppm['bils'].value_counts(dropna=False))
 # values considered as 'in' for x&w
 xw_list = ['x', 'w', 'u']
 
-# create new column 'x&w' based on column 'jcn_status-1'
+# create new column 'x&w' based on column 'xxx_status-1'
 # values considered as 'in' for x&w
 xw_list = ['x', 'w', 'u']
 
 # create new column 'x&w' including NaN as 'in'
-df_fip_cwp_oppm['x&w'] = df_fip_cwp_oppm['jcn_status'].apply(
+df_fip_cwp_oppm['x&w'] = df_fip_cwp_oppm['xxx_status'].apply(
     lambda x: 'in' if (pd.isna(x) or str(x).lower() in xw_list) else 'out'
 )
 
@@ -698,24 +646,24 @@ import numpy as np
 import pandas as pd
 
 # Ensure text columns are strings
-df_fip_cwp_oppm['jcn_desc'] = df_fip_cwp_oppm['jcn_desc'].astype(str)
+df_fip_cwp_oppm['xxx_desc'] = df_fip_cwp_oppm['xxx_desc'].astype(str)
 df_fip_cwp_oppm['proj_cd'] = df_fip_cwp_oppm['proj_cd'].astype(str)
 
 # Define conditions
 conditions = [
     # CAB_GLASS
-    df_fip_cwp_oppm['jcn_desc'].str.contains('CAB GLASS', case=False, na=False) |
-    df_fip_cwp_oppm['jcn_desc'].str.contains('WINDOW PANELS', case=False, na=False) |
-    df_fip_cwp_oppm['jcn_desc'].str.contains('WINDOW GLASS', case=False, na=False) |
-    df_fip_cwp_oppm['jcn_desc'].str.contains('WINDOW PANEL', case=False, na=False) |
-    df_fip_cwp_oppm['jcn_desc'].str.contains('CAB PANEL', case=False, na=False) |
-    df_fip_cwp_oppm['jcn_desc'].str.contains('CAB PANELS', case=False, na=False),
+    df_fip_cwp_oppm['xxx_desc'].str.contains('CAB GLASS', case=False, na=False) |
+    df_fip_cwp_oppm['xxx_desc'].str.contains('WINDOW PANELS', case=False, na=False) |
+    df_fip_cwp_oppm['xxx_desc'].str.contains('WINDOW GLASS', case=False, na=False) |
+    df_fip_cwp_oppm['xxx_desc'].str.contains('WINDOW PANEL', case=False, na=False) |
+    df_fip_cwp_oppm['xxx_desc'].str.contains('CAB PANEL', case=False, na=False) |
+    df_fip_cwp_oppm['xxx_desc'].str.contains('CAB PANELS', case=False, na=False),
     
     # CAB_SHADE
-    df_fip_cwp_oppm['jcn_desc'].str.contains('CAB SHADE', case=False, na=False) |
-    df_fip_cwp_oppm['jcn_desc'].str.contains('CAB SHADES', case=False, na=False) |
-    df_fip_cwp_oppm['jcn_desc'].str.contains('WINDOW SHADE', case=False, na=False) |
-    df_fip_cwp_oppm['jcn_desc'].str.contains('WINDOW SHADES', case=False, na=False),
+    df_fip_cwp_oppm['xxx_desc'].str.contains('CAB SHADE', case=False, na=False) |
+    df_fip_cwp_oppm['xxx_desc'].str.contains('CAB SHADES', case=False, na=False) |
+    df_fip_cwp_oppm['xxx_desc'].str.contains('WINDOW SHADE', case=False, na=False) |
+    df_fip_cwp_oppm['xxx_desc'].str.contains('WINDOW SHADES', case=False, na=False),
     
     # ERMS
     df_fip_cwp_oppm['proj_cd'].isin(['98310684', '9831J684']),
@@ -739,8 +687,8 @@ df_fip_cwp_oppm['fip_additions_cat'] = np.select(conditions, choices, default='N
 print(df_fip_cwp_oppm['fip_additions_cat'].value_counts(dropna=False))
 #%%
 # 13. --- DUPlICATION COUNTS --- 
-# Count duplicates of each JCN
-df_fip_cwp_oppm['dup_counts'] = df_fip_cwp_oppm.groupby('jcn')['jcn'].transform('count')
+# Count duplicates of each xxx
+df_fip_cwp_oppm['dup_counts'] = df_fip_cwp_oppm.groupby('xxx')['xxx'].transform('count')
 
 # Validate 
 print(df_fip_cwp_oppm['dup_counts'].value_counts(dropna=False))
@@ -748,13 +696,13 @@ print(df_fip_cwp_oppm['dup_counts'].value_counts(dropna=False))
 df_fip_cwp_oppm.info()
 #%%
 #14.---FIP_INSTANCE ---
-# Create jcn_instances based on dup_counts
-df_fip_cwp_oppm['jcn_instances'] = df_fip_cwp_oppm['dup_counts'].apply(
+# Create xxx_instances based on dup_counts
+df_fip_cwp_oppm['xxx_instances'] = df_fip_cwp_oppm['dup_counts'].apply(
     lambda x: 'DUPLICATE' if x > 1 else 'UNIQUE'
 )
 
 # Validate 
-print(df_fip_cwp_oppm['jcn_instances'].value_counts(dropna=False))
+print(df_fip_cwp_oppm['xxx_instances'].value_counts(dropna=False))
 
 #%%
 df_fip_cwp_oppm.info()
@@ -776,8 +724,8 @@ print(df_fip_cwp_oppm['fip_fy'].value_counts(dropna=False))
 # 15. ---FIP_LIST ---
 import numpy as np
 
-# Force JCN to string so it never changes
-df_fip_cwp_oppm['jcn'] = df_fip_cwp_oppm['jcn'].astype(str)
+# Force xxx to string so it never changes
+df_fip_cwp_oppm['xxx'] = df_fip_cwp_oppm['xxx'].astype(str)
 
 # Convert fip_fy safely to numeric (real NaN stays NaN)
 df_fip_cwp_oppm['fip_fy'] = pd.to_numeric(df_fip_cwp_oppm['fip_fy'], errors='coerce')
@@ -785,20 +733,20 @@ df_fip_cwp_oppm['fip_fy'] = pd.to_numeric(df_fip_cwp_oppm['fip_fy'], errors='coe
 # Create pivot table (keep NaN years as a separate column)
 pivot = (
     df_fip_cwp_oppm
-    .groupby(['jcn', 'fip_fy'])
+    .groupby(['xxx', 'fip_fy'])
     .size()
     .reset_index(name='dup_count')
-    .pivot(index='jcn', columns='fip_fy', values='dup_count')
+    .pivot(index='xxx', columns='fip_fy', values='dup_count')
     .fillna(0)
     .reset_index()
 )
 
-# Make sure pivot jcn also stays string
-pivot['jcn'] = pivot['jcn'].astype(str)
+# Make sure pivot xxx also stays string
+pivot['xxx'] = pivot['xxx'].astype(str)
 
 print(pivot.head(20))
 #%%
-# Get fiscal year columns from the pivot table (skip 'jcn' and invalid years)
+# Get fiscal year columns from the pivot table (skip 'xxx' and invalid years)
 fy_columns = [col for col in pivot.columns if isinstance(col, (int, float)) and col > 0]
 
 # Create fy_list by checking each FY column value in the row
@@ -808,57 +756,57 @@ pivot['fy_list'] = pivot[fy_columns].apply(
 )
 
 # Display first 50 rows
-print(pivot[['jcn', 'fy_list']].head(50))
+print(pivot[['xxx', 'fy_list']].head(50))
 
 #%%
-# Ensure both 'jcn' columns are strings
-df_fip_cwp_oppm['jcn'] = df_fip_cwp_oppm['jcn'].astype(str).str.strip()
-pivot['jcn'] = pivot['jcn'].astype(str).str.strip()
+# Ensure both 'xxx' columns are strings
+df_fip_cwp_oppm['xxx'] = df_fip_cwp_oppm['xxx'].astype(str).str.strip()
+pivot['xxx'] = pivot['xxx'].astype(str).str.strip()
 
-print("Pivot jcn example:")
-print(pivot[['jcn']].head(10))
-print(pivot['jcn'].dtype)
+print("Pivot xxx example:")
+print(pivot[['xxx']].head(10))
+print(pivot['xxx'].dtype)
 
-print ("Dataframe jcn example")
-print(df_fip_cwp_oppm[['jcn']].head(10))
-print(df_fip_cwp_oppm['jcn'].dtype)
+print ("Dataframe xxx example")
+print(df_fip_cwp_oppm[['xxx']].head(10))
+print(df_fip_cwp_oppm['xxx'].dtype)
 
 #%%
 # Strip any extra whitespace
-df_fip_cwp_oppm['jcn'] = df_fip_cwp_oppm['jcn'].str.strip()
-pivot['jcn'] = pivot['jcn'].str.strip()
+df_fip_cwp_oppm['xxx'] = df_fip_cwp_oppm['xxx'].str.strip()
+pivot['xxx'] = pivot['xxx'].str.strip()
 
-# Check which jcn values are missing in pivot
-missing_jcn = set(df_fip_cwp_oppm['jcn']) - set(pivot['jcn'])
-print("Example missing jcn values (up to 20):", list(missing_jcn)[:20])
-print("Total missing jcn count:", len(missing_jcn))
+# Check which xxx values are missing in pivot
+missing_xxx = set(df_fip_cwp_oppm['xxx']) - set(pivot['xxx'])
+print("Example missing xxx values (up to 20):", list(missing_xxx)[:20])
+print("Total missing xxx count:", len(missing_xxx))
 
 #%%
-# Ensure 'jcn' are strings and strip spaces
-df_fip_cwp_oppm['jcn'] = df_fip_cwp_oppm['jcn'].astype(str).str.strip()
-pivot['jcn'] = pivot['jcn'].astype(str).str.strip()
+# Ensure 'xxx' are strings and strip spaces
+df_fip_cwp_oppm['xxx'] = df_fip_cwp_oppm['xxx'].astype(str).str.strip()
+pivot['xxx'] = pivot['xxx'].astype(str).str.strip()
 
 # Fill NaN in pivot fy_list just in case
 pivot['fy_list'] = pivot['fy_list'].fillna('No Data')
 
 # Create lookup dictionary from pivot
-fy_lookup = pivot.set_index('jcn')['fy_list']
+fy_lookup = pivot.set_index('xxx')['fy_list']
 
 # Map only baseline projects
 df_fip_cwp_oppm['fy_list'] = df_fip_cwp_oppm.apply(
-    lambda row: fy_lookup.get(row['jcn'], 'No Data') if row['fip_baseline'] == 'YES' else None,
+    lambda row: fy_lookup.get(row['xxx'], 'No Data') if row['fip_baseline'] == 'YES' else None,
     axis=1
 )
 
 # Quick check
-print(df_fip_cwp_oppm[['jcn', 'fip_baseline', 'fy_list']].head(20))
+print(df_fip_cwp_oppm[['xxx', 'fip_baseline', 'fy_list']].head(20))
 
 #%%
 # Filter only baseline projects
 baseline_df = df_fip_cwp_oppm[df_fip_cwp_oppm['fip_baseline'] == 'YES']
 
 # Quick check
-print(baseline_df[['jcn', 'fip_baseline', 'fy_list']].head(20))
+print(baseline_df[['xxx', 'fip_baseline', 'fy_list']].head(20))
 
 #%%
 # Convert NaN to No Data 
@@ -872,23 +820,23 @@ df_fip_cwp_oppm = df_fip_cwp_oppm.fillna('NO DATA')
 df_fip_cwp_oppm.replace('', 'NO DATA', inplace=True)
 
 
-print(df_fip_cwp_oppm[['jcn', 'baseline_mdce', 'baseline_sa']].head(10))
+print(df_fip_cwp_oppm[['xxx', 'baseline_mdce', 'baseline_sa']].head(10))
 
 #%% 
 #16.---MOVE & NO-MOVED CALCULATION ---
-# count how many times each jcn appears
-jcn_counts = df_fip_cwp_oppm['jcn'].value_counts()
+# count how many times each xxx appears
+xxx_counts = df_fip_cwp_oppm['xxx'].value_counts()
 
-# filter only duplicate jcns
-duplicate_jcns = jcn_counts[jcn_counts > 1].index
+# filter only duplicate xxxs
+duplicate_xxxs = xxx_counts[xxx_counts > 1].index
 
 # create a new column with None by default
 df_fip_cwp_oppm['dups_occurrences'] = None
 
 # mark first occurrence as 'first' and remaining as 'later' for duplicates
-first_idx = df_fip_cwp_oppm[df_fip_cwp_oppm['jcn'].isin(duplicate_jcns)].groupby('jcn').head(1).index
+first_idx = df_fip_cwp_oppm[df_fip_cwp_oppm['xxx'].isin(duplicate_xxxs)].groupby('xxx').head(1).index
 df_fip_cwp_oppm.loc[first_idx, 'dups_occurrences'] = 'first'
-df_fip_cwp_oppm.loc[df_fip_cwp_oppm['jcn'].isin(duplicate_jcns) & df_fip_cwp_oppm.index.isin(first_idx)==False, 'dups_occurrences'] = 'later'
+df_fip_cwp_oppm.loc[df_fip_cwp_oppm['xxx'].isin(duplicate_xxxs) & df_fip_cwp_oppm.index.isin(first_idx)==False, 'dups_occurrences'] = 'later'
 
 # check counts
 df_fip_cwp_oppm['dups_occurrences'].value_counts()
@@ -896,22 +844,22 @@ df_fip_cwp_oppm['dups_occurrences'].value_counts()
 #%%
 import numpy as np
 
-# count how many times each jcn appears
-jcn_counts = df_fip_cwp_oppm['jcn'].value_counts()
+# count how many times each xxx appears
+xxx_counts = df_fip_cwp_oppm['xxx'].value_counts()
 
-# identify duplicate jcns (appear more than once)
-duplicate_jcns = jcn_counts[jcn_counts > 1].index
+# identify duplicate xxxs (appear more than once)
+duplicate_xxxs = xxx_counts[xxx_counts > 1].index
 
 # create dups_occurrences column
 df_fip_cwp_oppm['dups_occurrences'] = np.where(
-    df_fip_cwp_oppm['jcn'].isin(duplicate_jcns),
-    np.where(df_fip_cwp_oppm.duplicated(subset='jcn', keep='first'), 'later', 'first'),
+    df_fip_cwp_oppm['xxx'].isin(duplicate_xxxs),
+    np.where(df_fip_cwp_oppm.duplicated(subset='xxx', keep='first'), 'later', 'first'),
     None
 )
 
 # create baseline_flag
 # first occurrence of duplicate → baseline_cal
-# unique JCNs → baseline_cal
+# unique xxxs → baseline_cal
 # remaining duplicates → baseline_dup
 df_fip_cwp_oppm['baseline_flag'] = np.where(
     df_fip_cwp_oppm['dups_occurrences'] == 'first', 'baseline_cal',
@@ -944,7 +892,7 @@ print(df_fip_cwp_oppm['dups_cal_moved'].value_counts())
 #%%
 #17.--- CLEAN FINAL DATASET---
 # Drop columns you don't need
-df_fip_cwp_oppm = df_fip_cwp_oppm.drop(columns=['fip', 'bils', 'fip_year','x&w', 'fip_jcn_description', 'baseline_flag', 'dups', 'dups_occurrences'])
+df_fip_cwp_oppm = df_fip_cwp_oppm.drop(columns=['fip', 'bils', 'fip_year','x&w', 'fip_xxx_description', 'baseline_flag', 'dups', 'dups_occurrences'])
 
 # Check the DataFrame structure
 df_fip_cwp_oppm.info()
@@ -958,13 +906,13 @@ df_fip_cwp_oppm['fip_fy'] = df_fip_cwp_oppm['fip_fy'].apply(
 df_fip_cwp_oppm['fip_fy'].value_counts()
 #%%
 # Convert all date column to date time 
-date_cols = ['jcn_stat_dt', 'compltn_dt', 'pa_execution_dt', 
+date_cols = ['xxx_stat_dt', 'compltn_dt', 'pa_execution_dt', 
              'pa_planning_fy']
 
 for col in date_cols:
     df_fip_cwp_oppm[col] = pd.to_datetime(df_fip_cwp_oppm[col], errors='coerce')
 
-df_fip_cwp_oppm[['jcn_stat_dt', 'compltn_dt', 'pa_execution_dt', 
+df_fip_cwp_oppm[['xxx_stat_dt', 'compltn_dt', 'pa_execution_dt', 
                  'pa_planning_fy' ]].dtypes
 #%%
 # Extract the year 
@@ -1008,7 +956,7 @@ df_clean.to_csv('df_fip_cwp_oppm_v1.csv', index=False, quoting=1)  # quoting=1 i
 print("Rows in DataFrame:", len(df_clean))
 #%% CANCELLATIONS
 #%%
-#  --- OPEN & CLEAN CWP ARCHIVE JCN DELETED ---
+#  --- OPEN & CLEAN CWP ARCHIVE xxx DELETED ---
 # Read the CSV file (replace 'your_file.csv' with your actual file name)
 df_cwp_deleted_cancel = pd.read_csv('p6_deleted_canceled_projects.csv')
 
@@ -1029,11 +977,11 @@ df_cwp_deleted_cancel.info()
 # keep only the needed columns
 df_cwp_deleted_cancel = df_cwp_deleted_cancel[[
     "project_id", 
-    "jcn_status_date" 
+    "xxx_status_date" 
 ]]
 
-# Rename project_id -> jcn
-df_cwp_deleted_cancel = df_cwp_deleted_cancel.rename(columns={"project_id": "jcn"})
+# Rename project_id -> xxx
+df_cwp_deleted_cancel = df_cwp_deleted_cancel.rename(columns={"project_id": "xxx"})
 
 # Check the result
 df_cwp_deleted_cancel.info()
@@ -1046,51 +994,51 @@ df_cwp_deleted_cancel.shape[0]
 # Perform left join
 df_merged = df_fip_cwp_oppm.merge(
     df_cwp_deleted_cancel,
-    on='jcn',
+    on='xxx',
     how='left'
 )
 #%%
 df_merged.shape[0]
 #%%
-df_merged['jcn_status_date'].value_counts()
+df_merged['xxx_status_date'].value_counts()
 #%%
-df_merged['jcn_status_date'].notna().sum()
+df_merged['xxx_status_date'].notna().sum()
 #%%
-df_merged['jcn_status_date'].value_counts()
+df_merged['xxx_status_date'].value_counts()
 #%%
-# Convert jcn_status_date to datetime
-df_merged['jcn_status_date'] = pd.to_datetime(df_merged['jcn_status_date'])
+# Convert xxx_status_date to datetime
+df_merged['xxx_status_date'] = pd.to_datetime(df_merged['xxx_status_date'])
 
 # Extract the year (as string) while removing any '.0'
-df_merged['jcn_status_year'] = df_merged['jcn_status_date'].dt.year.astype('Int64').astype('string')
+df_merged['xxx_status_year'] = df_merged['xxx_status_date'].dt.year.astype('Int64').astype('string')
 
 # Value counts including NaN
-year_counts = df_merged['jcn_status_year'].value_counts(dropna=False).sort_index()
+year_counts = df_merged['xxx_status_year'].value_counts(dropna=False).sort_index()
 
 year_counts
 
 #%%
-# Create jcn_stat_dt_cal based on the conditional logic
-df_merged['jcn_stat_dt_cal'] = df_merged.apply(
-    lambda row: row['jcn_status_year']
-    if pd.isna(row['jcn_stat_dt']) or str(row['jcn_stat_dt']).strip() == ""
-    else row['jcn_stat_dt'],
+# Create xxx_stat_dt_cal based on the conditional logic
+df_merged['xxx_stat_dt_cal'] = df_merged.apply(
+    lambda row: row['xxx_status_year']
+    if pd.isna(row['xxx_stat_dt']) or str(row['xxx_stat_dt']).strip() == ""
+    else row['xxx_stat_dt'],
     axis=1
 )
 
-df_merged['jcn_stat_dt_cal'].value_counts(dropna=False).sort_values(ascending=False)
+df_merged['xxx_stat_dt_cal'].value_counts(dropna=False).sort_values(ascending=False)
 #%%
 df_merged['sbit_status'].value_counts()
 
 #%%
 # Value count for CANCELLED, descending order
-df_merged.loc[df_merged['sbit_status'] == 'CANCELLED', 'jcn_stat_dt_cal'] \
+df_merged.loc[df_merged['sbit_status'] == 'CANCELLED', 'xxx_stat_dt_cal'] \
          .value_counts(dropna=False) \
          .sort_values(ascending=False)
 
 #%%
 # Filter by CANCELLED without using .loc
-df_merged[df_merged['sbit_status'] == 'CANCELLED']['jcn_stat_dt_cal'] \
+df_merged[df_merged['sbit_status'] == 'CANCELLED']['xxx_stat_dt_cal'] \
          .value_counts(dropna=False) \
          .sort_values(ascending=False)
 
@@ -1098,5 +1046,6 @@ df_merged[df_merged['sbit_status'] == 'CANCELLED']['jcn_stat_dt_cal'] \
 import pandas as pd
 # Save df_merged as a CSV file
 df_merged.to_csv('df_fip_cwp_cancelations.csv', index=False)
+
 
 
