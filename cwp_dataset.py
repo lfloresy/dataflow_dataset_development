@@ -29,7 +29,7 @@ print("cx_Oracle version:", cx_Oracle.version)
 
 # Connection Credentials 
 dsn = cx_Oracle.makedsn("pdbsamc505.faa.gov", 1521, service_name="ndc") 
-conn = cx_Oracle.connect(user="LFYANEZ", password="SummerVerano2027%", dsn=dsn) #enter your user name and password to connect to the Oracle database
+conn = cx_Oracle.connect(user="xxxxx", password="xxxxxx", dsn=dsn) #enter your user name and password to connect to the Oracle database
 
 print("Connected successfully!")
 
@@ -1098,4 +1098,5 @@ df_merged[df_merged['sbit_status'] == 'CANCELLED']['jcn_stat_dt_cal'] \
 import pandas as pd
 # Save df_merged as a CSV file
 df_merged.to_csv('df_fip_cwp_cancelations.csv', index=False)
+
 
