@@ -146,7 +146,7 @@ print("Final number of rows:", len(df_xxx_final))
 
 print(df_xxx_final['xxx_status'].value_counts())
 #%%
-# --- 2.LOAD FY17-FY27 FILE ---
+# --- 2.LOAD xx17-xx27 FILE ---
 import os
 
 # Check current working directory
@@ -154,25 +154,25 @@ print("Current working directory:", os.getcwd())
 
 #%%
 # Read the CSV file (replace 'your_file.csv' with your actual file name)
-df_x_fy = pd.read_csv('FY17-FY27_AUG2025.csv')
+df_x_xx = pd.read_csv('xx17-xx27_AUG2025.csv')
 
 # Display the first few rows to confirm it loaded correctly
-df_x_fy.info()
+df_x_xx.info()
 #%%
 # Convert all column names to snake_case
-df_x_fy.columns = df_x_fy.columns.str.strip() \
+df_x_xx.columns = df_x_xx.columns.str.strip() \
                        .str.lower() \
                        .str.replace(' ', '_') \
                        .str.replace('-', '_')
 # Show the results 
-df_x_fy.info()
-print(len(df_x_fy))
+df_x_xx.info()
+print(len(df_x_xx))
 
 #%%
-# Create a duplicate of df_x_fy
-df_fy_v2 = df_x_fy.copy()
+# Create a duplicate of df_x_xx
+df_xx_v2 = df_x_xx.copy()
 
-df_fy_v2.info()
+df_xx_v2.info()
 
 #%% Clean the file
 # List of columns to remove
@@ -181,24 +181,24 @@ cols_to_drop = [
    ]
 
 # Drop the columns
-df_x_fy = df_x_fy.drop(columns=cols_to_drop, errors="ignore")
+df_x_xx = df_x_xx.drop(columns=cols_to_drop, errors="ignore")
 
-# Verify result
-df_x_fy.info()
+# Verixx result
+df_x_xx.info()
 
 #%%
-# --- 3.JOIN xxx & FFY17-FY27 FOR ADDITIONS ---
+# --- 3.JOIN xxx & Fxx17-xx27 FOR ADDITIONS ---
 
 # Perform a left join first
 merged = pd.merge(
     df_xxx_final,
-    df_x_fy,
+    df_x_xx,
     on="xxx",
     how="left",
     indicator=True
 )
 
-# Keep only rows from df_xxx_final that did NOT match in df_x_fy
+# Keep only rows from df_xxx_final that did NOT match in df_x_xx
 df_xxx_add = merged[merged["_merge"] == "left_only"].drop(columns=["_merge"])
 
 # Show the results 
@@ -206,7 +206,7 @@ df_xxx_add.info()
 
 # Check the results
 print("Rows in df_xxx_final:", len(df_xxx_final))
-print("Rows in df_x_fy:", len(df_x_fy))
+print("Rows in df_x_xx:", len(df_x_xx))
 print("Rows in df_xxx_add (unmatched):", len(df_xxx_add))
 
 print(df_xxx_add['xxx_status'].value_counts())
@@ -249,7 +249,7 @@ df_xxx_add_shortfalls = pd.merge(
     how="left"
 )
 
-# Verify row counts
+# Verixx row counts
 print("Rows in df_xxx_add:", len(df_xxx_add))
 print("Rows in df_shortfalls:", len(df_shortfalls))
 print("Rows in df_xxx_add_shortfalls (left join result):", len(df_xxx_add_shortfalls))
@@ -259,7 +259,7 @@ print(df_xxx_add_shortfalls['xxx_status'].value_counts())
 df_xxx_add_shortfalls.info()
 #%%
 # Add x_baseline column
-df_x_fy["x_baseline"] = "YES"
+df_x_xx["x_baseline"] = "YES"
 df_xxx_add_shortfalls["x_baseline"] = "NO"
 
 # Force multi_year = "NO" for all xxx_add_shortfalls
@@ -278,8 +278,8 @@ print(df_xxx_subset['xxx_status'].value_counts())
 df_xxx_subset.info()
 
 #%% df_x_xxx_subset_updated
-# Left join with df_x_fy as the left table
-df_x_xxx_subset_updated = df_fy_v2_subset.merge(
+# Left join with df_x_xx as the left table
+df_x_xxx_subset_updated = df_xx_v2_subset.merge(
     df_xxx_subset,
     on="xxx",
     how="left",
@@ -287,13 +287,13 @@ df_x_xxx_subset_updated = df_fy_v2_subset.merge(
 )
 
 # Validate with row counts
-print("Row count df_x_fy:", len(df_x_fy))
+print("Row count df_x_xx:", len(df_x_xx))
 print("Row count df_xxx_subset:", len(df_xxx_subset))
 print("Row count df_x_xxx_subset_updated:", len(df_x_xxx_subset_updated))
 
 #%% UPPDATED df_x_xxx_subset
-# Left join with df_x_fy as the left table
-df_x_xxx_subset_updated = df_fy_v2_subset.merge(
+# Left join with df_x_xx as the left table
+df_x_xxx_subset_updated = df_xx_v2_subset.merge(
     df_xxx_subset,
     on="xxx",
     how="left",
@@ -301,15 +301,15 @@ df_x_xxx_subset_updated = df_fy_v2_subset.merge(
 )
 
 # Validate with row counts
-print("Row count df_x_fy_v2_subset:", len(df_fy_v2_subset))
+print("Row count df_x_xx_v2_subset:", len(df_xx_v2_subset))
 print("Row count df_xxx_subset:", len(df_xxx_subset))
 print("Row count df_x_xxx_subset_updated:", len(df_x_xxx_subset_updated))
 
 
 #%%
 #%% ORIGINAL df_x_xxx_subset
-# Left join with df_x_fy as the left table
-df_x_xxx_subset = df_x_fy.merge(
+# Left join with df_x_xx as the left table
+df_x_xxx_subset = df_x_xx.merge(
     df_xxx_subset,
     on="xxx",
     how="left",
@@ -317,21 +317,21 @@ df_x_xxx_subset = df_x_fy.merge(
 )
 
 # Validate with row counts
-print("Row count df_x_fy:", len(df_x_fy))
+print("Row count df_x_xx:", len(df_x_xx))
 print("Row count df_xxx_subset:", len(df_xxx_subset))
 print("Row count df_x_xxx_subset:", len(df_x_xxx_subset))
 
 print(df_x_xxx_subset['xxx_status'].value_counts())
 
 #%%
-# --- 5.UNION x_FY & xxx_ADD ---
+# --- 5.UNION x_xx & xxx_ADD ---
 
 # Union (row-wise append)
 df_union_x_add = pd.concat([df_xxx_add_shortfalls, df_x_xxx_subset_updated], ignore_index=True)
 
 # Check the result
 print(len(df_xxx_add_shortfalls))
-print(len(df_x_fy))              # should be 9510
+print(len(df_x_xx))              # should be 9510
 print(len(df_union_x_add))               
 
 print(df_union_x_add['xxx_status'].value_counts(dropna=False))
@@ -364,9 +364,9 @@ print(df_union_x_add["x_add_shortfall"].value_counts(dropna=False))
 # --- 6.GET OPPM CHANGE REASONS & MULTI-YEAR --- 
 
 # Read the CSV file (replace 'your_file.csv' with your actual file name)
-df_my = pd.read_csv('my_fy17_fy28_v1.csv')
+df_my = pd.read_csv('my_xx17_xx28_v1.csv')
 
-df_my = df_my[["xxx", "MULTI_YEAR", "x_FY"]]
+df_my = df_my[["xxx", "MULTI_YEAR", "x_xx"]]
 df_my.info()
 
 #%%
@@ -384,10 +384,10 @@ df_my= df_my[df_my['multi_year'] != "NO"]
 
 print(df_my['multi_year'].value_counts())
 #%% 
-# Sort by xxx and x_fy descending
+# Sort by xxx and x_xx descending
 df_my = df_my.sort_values(['xxx', 'xxx'], ascending=[True, False])
 
-# Keep only the latest x_fy per xxx
+# Keep only the latest x_xx per xxx
 df_my = df_my.groupby('xxx', group_keys=False).head(1)
 
 # Validate
@@ -396,8 +396,8 @@ print(df_my['xxx'].value_counts())  # all values should be 1
 
 df_my.info()
 #%%
-# Drop x_fy
-df_my = df_my.drop(columns=['x_fy'])
+# Drop x_xx
+df_my = df_my.drop(columns=['x_xx'])
 
 df_my.info()
 
@@ -607,16 +607,16 @@ conditions = [
     (df_x_xxx_oppm['x'] == 'out') & (df_x_xxx_oppm['bils'] == 'out') & (df_x_xxx_oppm['x&w'] == 'out'),
     
     # DELAYED by year rules
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2017') & (df_x_xxx_oppm['pa_execution_dt'] > '2018-03-31'),
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2018') & (df_x_xxx_oppm['pa_execution_dt'] > '2019-03-31'),
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2019') & (df_x_xxx_oppm['pa_execution_dt'] > '2020-03-31'),
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2020') & (df_x_xxx_oppm['pa_execution_dt'] > '2021-03-31'),
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2021') & (df_x_xxx_oppm['pa_execution_dt'] > '2022-03-31'),
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2022') & (df_x_xxx_oppm['pa_execution_dt'] > '2023-03-31'),
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2023') & (df_x_xxx_oppm['pa_execution_dt'] > '2024-03-31'),
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2024') & (df_x_xxx_oppm['pa_execution_dt'] > '2025-03-31'),
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2025') & (df_x_xxx_oppm['pa_execution_dt'] > '2026-03-31'),
-    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_fy'] == '2026') & (df_x_xxx_oppm['pa_execution_dt'] > '2027-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2017') & (df_x_xxx_oppm['pa_execution_dt'] > '2018-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2018') & (df_x_xxx_oppm['pa_execution_dt'] > '2019-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2019') & (df_x_xxx_oppm['pa_execution_dt'] > '2020-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2020') & (df_x_xxx_oppm['pa_execution_dt'] > '2021-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2021') & (df_x_xxx_oppm['pa_execution_dt'] > '2022-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2022') & (df_x_xxx_oppm['pa_execution_dt'] > '2023-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2023') & (df_x_xxx_oppm['pa_execution_dt'] > '2024-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2024') & (df_x_xxx_oppm['pa_execution_dt'] > '2025-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2025') & (df_x_xxx_oppm['pa_execution_dt'] > '2026-03-31'),
+    (df_x_xxx_oppm['x&w'] == 'out') & (df_x_xxx_oppm['pa_planning_xx'] == '2026') & (df_x_xxx_oppm['pa_execution_dt'] > '2027-03-31'),
     
     # NULL DELAYED
     (df_x_xxx_oppm['pa_execution_dt'].isna())
@@ -706,19 +706,19 @@ print(df_x_xxx_oppm['xxx_instances'].value_counts(dropna=False))
 
 #%%
 df_x_xxx_oppm.info()
-print(df_x_xxx_oppm['x_fy'].value_counts(dropna=False))
+print(df_x_xxx_oppm['x_xx'].value_counts(dropna=False))
 
 print(
     df_x_xxx_oppm[df_x_xxx_oppm['x_baseline'] == 'YES']['x_year']
     .value_counts(dropna=False)
 )
 #%%
-# Convert x_fy to numeric (ignores errors, keeps NaN), then to Int where possible, then to string
-df_x_xxx_oppm['x_fy'] = pd.to_numeric(df_x_xxx_oppm['x_fy'], errors='coerce')
-df_x_xxx_oppm['x_fy'] = df_x_xxx_oppm['x_fy'].apply(lambda x: str(int(x)) if pd.notna(x) else 'NaN')
+# Convert x_xx to numeric (ignores errors, keeps NaN), then to Int where possible, then to string
+df_x_xxx_oppm['x_xx'] = pd.to_numeric(df_x_xxx_oppm['x_xx'], errors='coerce')
+df_x_xxx_oppm['x_xx'] = df_x_xxx_oppm['x_xx'].apply(lambda x: str(int(x)) if pd.notna(x) else 'NaN')
 
 # Now check value counts
-print(df_x_xxx_oppm['x_fy'].value_counts(dropna=False))
+print(df_x_xxx_oppm['x_xx'].value_counts(dropna=False))
 
 #%%
 # 15. ---x_LIST ---
@@ -727,16 +727,16 @@ import numpy as np
 # Force xxx to string so it never changes
 df_x_xxx_oppm['xxx'] = df_x_xxx_oppm['xxx'].astype(str)
 
-# Convert x_fy safely to numeric (real NaN stays NaN)
-df_x_xxx_oppm['x_fy'] = pd.to_numeric(df_x_xxx_oppm['x_fy'], errors='coerce')
+# Convert x_xx safely to numeric (real NaN stays NaN)
+df_x_xxx_oppm['x_xx'] = pd.to_numeric(df_x_xxx_oppm['x_xx'], errors='coerce')
 
 # Create pivot table (keep NaN years as a separate column)
 pivot = (
     df_x_xxx_oppm
-    .groupby(['xxx', 'x_fy'])
+    .groupby(['xxx', 'x_xx'])
     .size()
     .reset_index(name='dup_count')
-    .pivot(index='xxx', columns='x_fy', values='dup_count')
+    .pivot(index='xxx', columns='x_xx', values='dup_count')
     .fillna(0)
     .reset_index()
 )
@@ -747,16 +747,16 @@ pivot['xxx'] = pivot['xxx'].astype(str)
 print(pivot.head(20))
 #%%
 # Get fiscal year columns from the pivot table (skip 'xxx' and invalid years)
-fy_columns = [col for col in pivot.columns if isinstance(col, (int, float)) and col > 0]
+xx_columns = [col for col in pivot.columns if isinstance(col, (int, float)) and col > 0]
 
-# Create fy_list by checking each FY column value in the row
-pivot['fy_list'] = pivot[fy_columns].apply(
-    lambda row: ", ".join([str(int(fy)) for fy in fy_columns if row.get(fy, 0) > 0]),
+# Create xx_list by checking each xx column value in the row
+pivot['xx_list'] = pivot[xx_columns].apply(
+    lambda row: ", ".join([str(int(xx)) for xx in xx_columns if row.get(xx, 0) > 0]),
     axis=1
 )
 
 # Display first 50 rows
-print(pivot[['xxx', 'fy_list']].head(50))
+print(pivot[['xxx', 'xx_list']].head(50))
 
 #%%
 # Ensure both 'xxx' columns are strings
@@ -786,27 +786,27 @@ print("Total missing xxx count:", len(missing_xxx))
 df_x_xxx_oppm['xxx'] = df_x_xxx_oppm['xxx'].astype(str).str.strip()
 pivot['xxx'] = pivot['xxx'].astype(str).str.strip()
 
-# Fill NaN in pivot fy_list just in case
-pivot['fy_list'] = pivot['fy_list'].fillna('No Data')
+# Fill NaN in pivot xx_list just in case
+pivot['xx_list'] = pivot['xx_list'].fillna('No Data')
 
 # Create lookup dictionary from pivot
-fy_lookup = pivot.set_index('xxx')['fy_list']
+xx_lookup = pivot.set_index('xxx')['xx_list']
 
 # Map only baseline projects
-df_x_xxx_oppm['fy_list'] = df_x_xxx_oppm.apply(
-    lambda row: fy_lookup.get(row['xxx'], 'No Data') if row['x_baseline'] == 'YES' else None,
+df_x_xxx_oppm['xx_list'] = df_x_xxx_oppm.apply(
+    lambda row: xx_lookup.get(row['xxx'], 'No Data') if row['x_baseline'] == 'YES' else None,
     axis=1
 )
 
 # Quick check
-print(df_x_xxx_oppm[['xxx', 'x_baseline', 'fy_list']].head(20))
+print(df_x_xxx_oppm[['xxx', 'x_baseline', 'xx_list']].head(20))
 
 #%%
 # Filter only baseline projects
 baseline_df = df_x_xxx_oppm[df_x_xxx_oppm['x_baseline'] == 'YES']
 
 # Quick check
-print(baseline_df[['xxx', 'x_baseline', 'fy_list']].head(20))
+print(baseline_df[['xxx', 'x_baseline', 'xx_list']].head(20))
 
 #%%
 # Convert NaN to No Data 
@@ -847,7 +847,7 @@ import numpy as np
 # count how many times each xxx appears
 xxx_counts = df_x_xxx_oppm['xxx'].value_counts()
 
-# identify duplicate xxxs (appear more than once)
+# identixx duplicate xxxs (appear more than once)
 duplicate_xxxs = xxx_counts[xxx_counts > 1].index
 
 # create dups_occurrences column
@@ -874,7 +874,7 @@ print(df_x_xxx_oppm['baseline_flag'].value_counts())
 dups = df_x_xxx_oppm['baseline_flag'].copy()
 
 # Rename the values
-dups = dups.replace({'baseline_cal': 'NO MOVE', 'baseline_dup': 'MOVED FY'})
+dups = dups.replace({'baseline_cal': 'NO MOVE', 'baseline_dup': 'MOVED xx'})
 
 # Add the new parameter to your DataFrame
 df_x_xxx_oppm['dups'] = dups
@@ -884,7 +884,7 @@ print(df_x_xxx_oppm['dups'].value_counts())
 #%%
 # Create dups_cal_moved column
 df_x_xxx_oppm['dups_cal_moved'] = df_x_xxx_oppm['sbit_notes'].apply(
-    lambda x: 'MOVED FY' if x.upper() == 'DELAYED' else 'NO MOVE'
+    lambda x: 'MOVED xx' if x.upper() == 'DELAYED' else 'NO MOVE'
 )
 
 # Check how many rows are in each category
@@ -897,23 +897,23 @@ df_x_xxx_oppm = df_x_xxx_oppm.drop(columns=['x', 'bils', 'x_year','x&w', 'x_xxx_
 # Check the DataFrame structure
 df_x_xxx_oppm.info()
 #%%
-# Convert the x fy into string 
-df_x_xxx_oppm['x_fy'] = df_x_xxx_oppm['x_fy'].apply(
+# Convert the x xx into string 
+df_x_xxx_oppm['x_xx'] = df_x_xxx_oppm['x_xx'].apply(
     lambda x: 'NO DATA' if pd.isna(x) or str(x).strip().upper() == 'NO DATA' else str(int(float(x))) if str(x).replace('.', '', 1).isdigit() else str(x)
 )
 #%%
 # Validate value counts 
-df_x_xxx_oppm['x_fy'].value_counts()
+df_x_xxx_oppm['x_xx'].value_counts()
 #%%
 # Convert all date column to date time 
 date_cols = ['xxx_stat_dt', 'compltn_dt', 'pa_execution_dt', 
-             'pa_planning_fy']
+             'pa_planning_xx']
 
 for col in date_cols:
     df_x_xxx_oppm[col] = pd.to_datetime(df_x_xxx_oppm[col], errors='coerce')
 
 df_x_xxx_oppm[['xxx_stat_dt', 'compltn_dt', 'pa_execution_dt', 
-                 'pa_planning_fy' ]].dtypes
+                 'pa_planning_xx' ]].dtypes
 #%%
 # Extract the year 
 for col in date_cols:
@@ -952,7 +952,7 @@ df_clean = df_clean.replace({r'[\r\n]': ' '}, regex=True)
 # Export CSV with proper quoting to handle commas and special characters
 df_clean.to_csv('df_x_xxx_oppm_v1.csv', index=False, quoting=1)  # quoting=1 is csv.QUOTE_ALL
 
-# Verify row count
+# Verixx row count
 print("Rows in DataFrame:", len(df_clean))
 #%% CANCELLATIONS
 #%%
@@ -1046,6 +1046,7 @@ df_merged[df_merged['sbit_status'] == 'CANCELLED']['xxx_stat_dt_cal'] \
 import pandas as pd
 # Save df_merged as a CSV file
 df_merged.to_csv('df_x_xxx_cancelations.csv', index=False)
+
 
 
 
